@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>PLAYMUSIC</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 30px;
+            font-family: 'hover';
+            background-color: #25bea6;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            padding: auto;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 65px;
+        }
+
+        input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 65px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        #reproductorcito {
+            padding-top: 0px;
+        }
+
+        #reproductor {
+            padding-top: 20px;
+        }
+
+        #reproductorContainer {
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            margin: 0 auto;
+            margin-top: 30px;
+            display: none;
+            /* Oculta la caja por defecto */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="text-white">PLAYLIST ROBERTS</h1>
+                <form onsubmit="return reproducirCancion()">
+                    <div class="form-group">
+                        <label for="usuario">Usuario:</label>
+                        <input type="text" id="usuario" name="usuario" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edad">Edad:</label>
+                        <input type="number" id="edad" name="edad" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        
+                        <label for="titulo">Playlist</label>
+                        <select class="form-control" name="genero" id="genero" onchange="cargarCanciones()" required>
+                            <option value="" disabled selected>Selecciona un género</option>
+                            <option value="Rock">Rock</option>
+                            <option value="Reggaeton">Reggaeton</option>
+                            <option value="Salsa">Salsa</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="autor">Canción</label>
+                        <select class="form-control" name="canciones" id="canciones" required>
+                            <option value="" disabled selected>Selecciona una canción</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-dark" onclick="reproducirCancion()">PLAY</button>
+
+                </form>
+            </div>
+
+            <div id="reproductorcito" class="col-md-6">
+                <div id="reproductorContainer" class="text-center">
+                    <ul class="list-group list-group-flush">
+                        <li name="respuestaUsuario" id="respuestaUsuario" class="list-group-item"></li>
+                        <li name="respuestaEdad" id="respuestaEdad" class="list-group-item"></li>
+                        <li class="list-group-item"></li>
+                    </ul>
+                    <h2>Canción:</h2>
+                    <img id="cancionImagen" src="" alt="Canción Imagen" style="display: none; max-width: 100%;">
+                    <audio id="reproductor" controls style="display: none;"></audio>                  
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+
+    <script>
+        function cargarCanciones() {
+            var generoSeleccionado = document.getElementById("genero").value;
+            var cancionesSelect = document.getElementById("canciones");
+
+            // Limpiar opciones anteriores.
+            cancionesSelect.innerHTML = "";
+
+            // Agregar opciones según el género seleccionado con sus datos correspondientes.
+            if (generoSeleccionado === "Rock") {
+                agregarOpcion("song1", "Sweet Child On Mine");
+                agregarOpcion("song2", "Nothing else matter");
+                agregarOpcion("song3", "It\´s My Life");
+            } else if (generoSeleccionado === "Reggaeton") {
+                agregarOpcion("ReggaetonSong1", "Limbo");
+                agregarOpcion("ReggaetonSong2", "Neverita");
+                agregarOpcion("ReggaetonSong3", "Sola");
+            } else if (generoSeleccionado === "Salsa") {
+                agregarOpcion("SalsaSong1", "Deseandote");
+                agregarOpcion("SalsaSong2", "Siempre Sere");
+                agregarOpcion("SalsaSong3", "Virgen");
+            } else {
+                alert("No está leyendo bien los datos")
+            }
+        }
+
+        function agregarOpcion(valor, texto) {
+            var opcion = document.createElement("option");
+            opcion.value = valor;
+            opcion.text = texto;
+            document.getElementById("canciones").appendChild(opcion);
+        }
+
+        function reproducirCancion() {
+            //Selectores de los géneros, canciones, y datos introducidos.
+            var generoSeleccionado = document.getElementById("genero").value;
+            var cancionSeleccionada = document.getElementById("canciones").value;
+            var reproductor = document.getElementById("reproductor");
+            var reproductorContainer = document.getElementById("reproductorContainer");
+
+            var cancionImagen = document.getElementById("cancionImagen");
+
+            var usuario = document.getElementById("usuario").value;
+            var respuestaUsuario = document.getElementById("respuestaUsuario");
+
+            var edad = document.getElementById("edad").value;
+            var respuestaEdad = document.getElementById("respuestaEdad");
+
+
+            if (cancionSeleccionada) {
+                // Define un objeto con las rutas de las canciones
+                var cancionesInfo = {
+                    "Rock": {
+                        "song1": {
+                            "ruta": "Music/Guns N Roses  Sweet Child O Mine.mp3",
+                            "imagen": "Images/rock1.jpg"
+                        },
+                        "song2": {
+                            "ruta": "Music/metallica Nothing else matter.mp3",
+                            "imagen": "Images/rock2.jpg"
+                        },
+                        "song3": {
+                            "ruta": "Music/Bon Jovi It s My Life.mp3",
+                            "imagen": "Images/rock3.jpg"
+                        }
+                    },
+                    "Reggaeton": {
+                        "ReggaetonSong1": {
+                            "ruta": "Music/daddy_yankee Limbo.mp3",
+                            "imagen": "Images/reggaeton1.jpg"
+                        },
+                        "ReggaetonSong2": {
+                            "ruta": "Music/Bad Bunny Neverita.mp3",
+                            "imagen": "Images/reggaeton2.jpg"
+                        },
+                        "ReggaetonSong3": {
+                            "ruta": "Music/Anuel AA Sola.mp3",
+                            "imagen": "Images/reggaeton3.jpg"
+                        }
+                    },
+                    "Salsa": {
+                        "SalsaSong1": {
+                            "ruta": "Music/Frankie Ruiz - Deseandote.mp3",
+                            "imagen": "Images/salsa1.jpg"
+                        },
+                        "SalsaSong2": {
+                            "ruta": "Music/Tito Rojas Siempre Sere.mp3",
+                            "imagen": "Images/salsa2.jpg"
+                        },
+                        "SalsaSong3": {
+                            "ruta": "Music/Adolescentes Orquesta - Virgen.mp3",
+                            "imagen": "Images/salsa3.jpg"
+                        }
+                    }
+                };
+
+                // Obtén la información de la canción seleccionada
+                var cancionInfo = cancionesInfo[generoSeleccionado][cancionSeleccionada];
+
+                // Configurar el elemento audio
+                reproductor.innerHTML = ''; // Limpiar contenido existente
+                var source = document.createElement("source");
+                source.src = cancionInfo.ruta;
+                source.type = "audio/mp3";
+                reproductor.appendChild(source);
+
+                // Configurar la imagen de la canción
+                cancionImagen.src = cancionInfo.imagen;
+
+                //Mostran infor Usuario y Edad
+                respuestaUsuario.innerHTML = "Usuario: " + usuario;
+                respuestaEdad.innerHTML = "Edad: " + edad;
+
+                // Mostrar y reproducir la canción
+                reproductor.style.display = 'block';
+                cancionImagen.style.display = 'block';
+                reproductorContainer.style.display = 'block';
+                reproductor.load();
+                reproductor.play();
+            }
+
+            // Evitar el envío del formulario
+            return false;
+        }
+
+    </script>
+</body>
+
+</html>
+
+
+</html>
